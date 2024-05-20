@@ -18,6 +18,19 @@ public:
 protected:
 
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere,Category="Combat")
+	TObjectPtr<USkeletalMeshComponent> Weapon;
+
+	
+
+
+
+
+
+
+
+	
 //do not need to tick event and input event,it just a character base class ,that one will implementation in player character class and NPC character class
 // public:	
 // 	// Called every frame
