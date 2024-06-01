@@ -2,6 +2,7 @@
 
 
 #include "Player/AuraPlayerController.h"
+#include "EnhancedInputComponent.h"
 
 AAuraPlayerController::AAuraPlayerController()
 {
@@ -28,4 +29,25 @@ void AAuraPlayerController::BeginPlay()
 	//当光标的输入被被捕获时，不隐藏光标，（例如ff14控制鼠标控制人物方向，鼠标会消失，配置为false后则不会消失）
 	InputModeData.SetHideCursorDuringCapture(false);
 	SetInputMode(InputModeData);
+}
+
+void AAuraPlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
+}
+
+void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
+{
+	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
+	const FRotator Rotation = GetControlRotation();
+	const FRotator YawRotation (0.f, Rotation.Yaw, 0.f);
+	const FVector ForwardDirection =FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	const FVector RightDirection=FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	if (APawn*ControllerPawn=GetPawn<APawn>())
+	{
+		ControllerPawn->AddMovementInput(ForwardDirection,InputAxisVector.Y);
+		ControllerPawn->AddMovementInput(RightDirection,InputAxisVector.X);
+	}
 }
